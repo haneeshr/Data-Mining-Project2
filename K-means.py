@@ -24,17 +24,30 @@ def kmeans(filename, clusters):
     np.set_printoptions(suppress=True)
 
     geneData = np.genfromtxt(filename,delimiter='\t', dtype=float)
-    trueClusters = geneData[:, [0,1]]
+    trueClusters = geneData[:, [1]]
 
     geneData =  np.delete(geneData, [0,1], axis=1)
 
     sampleClusters = random.sample(range(0, geneData.shape[0]), clusters)
 
-    clusterPoints = []
-    for cluster in sampleClusters:
-        clusterPoints.append(geneData[cluster])
+    mean = np.zeros((5,16))
+    counts = [0]*5
 
-    clusterPoints = np.array(clusterPoints)
+    for i in range(0, len(trueClusters)):
+        ind = int(trueClusters[i])-1
+        mean[ind] += geneData[i]
+        counts[ind] += 1
+
+    for i in range(0,len(counts)):
+        mean[i] = mean[i]/counts[i]
+
+    # clusterPoints = []
+    # for cluster in sampleClusters:
+    #     clusterPoints.append(geneData[cluster])
+    #
+    clusterPoints = np.array(mean)
+    #
+    # print(clusterPoints)
 
     dataPoints = []
     for i in range(0, len(geneData)):
@@ -46,6 +59,31 @@ def kmeans(filename, clusters):
         needsClutering = performCluster(dataPoints, clusterPoints)
         clusterPoints = reCalculateCentroids(dataPoints, np.shape(clusterPoints)[0])
 
+    groundTruthMatrix = np.zeros(((np.shape(geneData))[0],(np.shape(geneData))[0]))
+    generatedClusterMatrix = np.zeros(((np.shape(geneData))[0],(np.shape(geneData))[0]))
+
+    for i in range(0, len(trueClusters)):
+        for j in range(0, len(trueClusters)):
+            if(trueClusters[i] == trueClusters[j]):
+                groundTruthMatrix[i][j] = 1
+
+    for i in range(0, len(dataPoints)):
+        for j in range(0, len(dataPoints)):
+            if(dataPoints[i].getCluster() == dataPoints[j].getCluster()):
+                generatedClusterMatrix[i][j] = 1
+
+
+    countones = 0;
+    countoneandZeros = 0
+
+    for i in range(0, len(trueClusters)):
+        for j in range(0, len(trueClusters)):
+            if(groundTruthMatrix[i][j] == 1 and generatedClusterMatrix[i][j] == 1):
+                countones += 1
+            elif(groundTruthMatrix[i][j] !=  generatedClusterMatrix[i][j]):
+                countoneandZeros += 1
+
+    print( countones/(countoneandZeros+countones))
     # for point in dataPoints:
     #     print(point.getCluster())
 
@@ -58,11 +96,11 @@ def reCalculateCentroids(dataPoints, clusterSize):
     currentClusterSum = np.zeros((clusterSize,
                                  pointDimension))
 
-    for i in range(0,len(dataPoints)):
+    for i in range(0, len(dataPoints)):
         clusterOccurence[dataPoints[i].getCluster()] += 1
         currentClusterSum[dataPoints[i].getCluster()] += dataPoints[i].getPointValue()
 
-    for i in range(0,len(clusterOccurence)):
+    for i in range(0, len(clusterOccurence)):
         currentClusterSum[i] = currentClusterSum[i] / clusterOccurence[i]
 
     return currentClusterSum
@@ -90,10 +128,9 @@ def performCluster(dataPoints, clusterPoints):
 
 def distance(point1, point2):
     dist = point1 - point2
-    dist = dist*dist
-    dist =  sum(dist)
-    # dist = dist^0.5
-    return dist
+    dist = np.square(dist)
+    dist = np.sum(dist)
+    return np.sqrt(dist)
 
 
 
