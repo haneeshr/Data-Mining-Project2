@@ -87,6 +87,23 @@ def kmeans(filename, clusters):
     # for point in dataPoints:
     #     print(point.getCluster())
 
+    countones = 0
+    countoneandZeros = 0
+    for i in range(len(dataPoints)):
+        for j in range(len(dataPoints)):
+            tc1 = dataPoints[i].trueCluster
+            tc2 = dataPoints[j].trueCluster
+            cn1 = dataPoints[i].clusterNumber
+            cn2 = dataPoints[j].clusterNumber
+
+            if tc1 == tc2 and cn1 == cn2:
+                countones+=1
+            elif tc1 == tc2 or cn1 == cn2:
+                countoneandZeros+=1
+
+    print countones
+    print countoneandZeros
+
 
 def reCalculateCentroids(dataPoints, clusterSize):
 
