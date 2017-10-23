@@ -83,7 +83,7 @@ def kmeans(filename, clusters):
             elif(groundTruthMatrix[i][j] !=  generatedClusterMatrix[i][j]):
                 countoneandZeros += 1
 
-    print( countones/(countoneandZeros+countones))
+    print(countones/(countoneandZeros+countones))
     # for point in dataPoints:
     #     print(point.getCluster())
 
