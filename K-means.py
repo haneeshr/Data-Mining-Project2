@@ -101,8 +101,8 @@ def kmeans(filename, clusters):
             elif tc1 == tc2 or cn1 == cn2:
                 countoneandZeros+=1
 
-    print countones
-    print countoneandZeros
+    print(countones)
+    print(countoneandZeros)
 
 
 def reCalculateCentroids(dataPoints, clusterSize):
