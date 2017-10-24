@@ -65,15 +65,11 @@ def hierarchical(filename, clusters):
 
 
 
-    while(len(clusteredMatrix) != 5):
-        # deletedPoint1 = clusteredMatrix[roww]
-        # deletedPoint1 = clusteredMatrix[:, col]
-        # np.delete(clusteredMatrix, col, axis=0)
-        # np.delete(clusteredMatrix, col, axis=1)
+    while(len(clusteredMatrix) != 1):
         deleteIndexes = np.array(np.unravel_index(np.argmin(clusteredMatrix), clusteredMatrix.shape))
         row = deleteIndexes[0]
         col = deleteIndexes[1]
-        print(row, col)
+        # print(row, col)
         for i in range(0, len(clusteredMatrix)):
             if i==row:
                 continue
@@ -87,13 +83,28 @@ def hierarchical(filename, clusters):
         merge(clusters[row], clusters[col])
         clusters.remove(clusters[col])
 
-    print(clusteredMatrix)
+        if len(clusteredMatrix)<20 :
+            print(len(clusters), calculateJaccardCoeff(clusters))
 
+def calculateJaccardCoeff(clusters):
+
+    onescount = 0
+    onesandzeroscount = 0
     for cluster in clusters:
-        print(len(cluster.points))
+        for point in cluster.getPoints():
+            for otherCluster in clusters:
+                for otherPoint in otherCluster.getPoints():
+                    tc1 = point.trueCluster
+                    tc2 = otherPoint.trueCluster
+                    cn1 = cluster.clusterNumber
+                    cn2 = otherCluster.clusterNumber
+                    if tc1 == tc2 and cn1 == cn2:
+                        onescount += 1
+                    elif tc1 == tc2 or cn1 == cn2:
+                        onesandzeroscount += 1
 
-
-    # print(clusteredMatrix[28][298])
+    return float(onescount)/float(onescount+onesandzeroscount)
+                    
 
 def distance(point1, point2):
     dist = (point1 - point2)
@@ -103,4 +114,4 @@ def distance(point1, point2):
 
 
 
-hierarchical('iyer.txt', 5)
+hierarchical('cho.txt', 5)
