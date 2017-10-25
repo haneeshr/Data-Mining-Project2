@@ -2,6 +2,10 @@ import random
 import numpy as np
 import sys
 
+import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.decomposition import TruncatedSVD
+
 class Point:
 
     def __init__(self, dataPoints, trueCluster):
@@ -28,24 +32,28 @@ def kmeans(filename, clusters):
 
     geneData =  np.delete(geneData, [0,1], axis=1)
 
+    trueClusters = open(filename, "r").readlines()
+    trueClusters = [x.split("\t")[1] for x in trueClusters]
+    trueClusters = np.array(trueClusters)
+
     sampleClusters = random.sample(range(0, geneData.shape[0]), clusters)
 
-    mean = np.zeros((5,16))
-    counts = [0]*5
+    # mean = np.zeros((5,16))
+    # counts = [0]*5
 
-    for i in range(0, len(trueClusters)):
-        ind = int(trueClusters[i])-1
-        mean[ind] += geneData[i]
-        counts[ind] += 1
+    # for i in range(0, len(trueClusters)):
+    #     ind = int(trueClusters[i])-1
+    #     mean[ind] += geneData[i]
+    #     counts[ind] += 1
 
-    for i in range(0,len(counts)):
-        mean[i] = mean[i]/counts[i]
+    # for i in range(0,len(counts)):
+    #     mean[i] = mean[i]/counts[i]
 
-    # clusterPoints = []
-    # for cluster in sampleClusters:
-    #     clusterPoints.append(geneData[cluster])
+    clusterPoints = []
+    for cluster in sampleClusters:
+        clusterPoints.append(geneData[cluster])
     #
-    clusterPoints = np.array(mean)
+    clusterPoints = np.array(clusterPoints)
     #
     # print(clusterPoints)
 
@@ -104,6 +112,24 @@ def kmeans(filename, clusters):
     print(countones)
     print(countoneandZeros)
 
+    assignedClusters = [point.clusterNumber for point in dataPoints]
+    svdDim = TruncatedSVD(n_components=2).fit_transform(geneData).T
+    plot(svdDim, "SVD on " + filename + "trueClusters", trueClusters.T)
+    plot(svdDim, "SVD on " + filename + "assignedClusters", assignedClusters)
+    plt.show()
+
+def plot(reeducedDimensions, title, diseases):
+    df = pd.DataFrame(dict(x=reeducedDimensions[0], y=reeducedDimensions[1], label=diseases))
+
+    groups = df.groupby('label')
+    fig, ax = plt.subplots()
+    for name, group in groups:
+        ax.plot(group.x, group.y, marker='o', linestyle='', label=name)
+    ax.legend()
+    plt.suptitle(title)
+    plt.xlabel('Principle Component 1')
+    plt.ylabel('Principle Component 2')
+
 
 def reCalculateCentroids(dataPoints, clusterSize):
 
@@ -153,6 +179,6 @@ def distance(point1, point2):
 
 # filename = sys.argv[1]
 # clusters = int(sys.argv[2])
-kmeans('cho.txt', 5)
+kmeans('iyer.txt', 10)
 
 

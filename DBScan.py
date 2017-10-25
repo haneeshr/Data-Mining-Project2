@@ -2,11 +2,8 @@ import random
 import numpy as np
 import sys
 
-
 import matplotlib.pyplot as plt
-from scipy.sparse.linalg import eigsh
 import pandas as pd
-from sklearn.manifold import TSNE
 from sklearn.decomposition import TruncatedSVD
 
 dataPoints = []
@@ -45,6 +42,10 @@ def dbscan(filename, eps, minpoints):
 
     geneData =  np.delete(geneData, [0,1], axis=1)
 
+    trueClusters = open(filename, "r").readlines()
+    trueClusters = [x.split("\t")[1] for x in trueClusters]
+    trueClusters = np.array(trueClusters)
+
     global dataPoints
 
     for i in range(0, len(geneData)):
@@ -80,13 +81,20 @@ def dbscan(filename, eps, minpoints):
             elif tc1 == tc2 or cn1 == cn2:
                 countoneandZeros+=1
 
-    print(countones / (countones + countoneandZeros))
+    print(float(countones) / float(countones + countoneandZeros))
 
     clusterNumberset = set()
     for i in range(0, len(dataPoints)):
         clusterNumberset.add(dataPoints[i].getCluster())
 
     print(clusterNumberset)
+
+    assignedClusters = [point.clusterNumber for point in dataPoints]
+    svdDim = TruncatedSVD(n_components=2).fit_transform(geneData).T
+
+    plot(svdDim, "SVD on " + filename + "trueClusters", trueClusters.T)
+    plot(svdDim, "SVD on " + filename + "assignedClusters", assignedClusters)
+    plt.show()
 
 def plot(reeducedDimensions, title, diseases):
     df = pd.DataFrame(dict(x=reeducedDimensions[0], y=reeducedDimensions[1], label=diseases))
@@ -128,10 +136,6 @@ def expandCluster(neighbourpoints, clusternumber, eps, minpoints):
             expandCluster(currentneighbours, clusternumber, eps, minpoints)
 
 
-
-
-
-
 def distance(point1, point2):
     dist = point1 - point2
     dist = np.square(dist)
@@ -139,4 +143,4 @@ def distance(point1, point2):
     return np.sqrt(dist)
 
 
-dbscan('cho.txt', 1.03, 4)
+dbscan('cho.txt', 1.1, 3)
