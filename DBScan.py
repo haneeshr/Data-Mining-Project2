@@ -40,7 +40,7 @@ def dbscan(filename, eps, minpoints):
     geneData = np.genfromtxt(filename,delimiter='\t', dtype=float)
     trueClusters = geneData[:, [1]]
 
-    geneData =  np.delete(geneData, [0,1], axis=1)
+    geneData =  np.delete(geneData, [0, 1], axis=1)
 
     trueClusters = open(filename, "r").readlines()
     trueClusters = [x.split("\t")[1] for x in trueClusters]
@@ -77,9 +77,9 @@ def dbscan(filename, eps, minpoints):
             cn2 = dataPoints[j].clusterNumber
 
             if tc1 == tc2 and cn1 == cn2:
-                countones+=1
+                countones += 1
             elif tc1 == tc2 or cn1 == cn2:
-                countoneandZeros+=1
+                countoneandZeros += 1
 
     print(float(countones) / float(countones + countoneandZeros))
 
@@ -92,8 +92,8 @@ def dbscan(filename, eps, minpoints):
     assignedClusters = [point.clusterNumber for point in dataPoints]
     svdDim = TruncatedSVD(n_components=2).fit_transform(geneData).T
 
-    plot(svdDim, "SVD on " + filename + "trueClusters", trueClusters.T)
-    plot(svdDim, "SVD on " + filename + "assignedClusters", assignedClusters)
+    plot(svdDim, "DBScan clustering" + filename + "trueClusters", trueClusters.T)
+    plot(svdDim, "DBscan clustering" + filename + "assignedClusters", assignedClusters)
     plt.show()
 
 def plot(reeducedDimensions, title, diseases):
@@ -115,8 +115,7 @@ def findNeighbours(point, eps):
     neighbourPoints = []
 
     for i in range(0, len(dataPoints)):
-        if(point == dataPoints[i]): continue
-        if(distance(dataPoints[i].getPointValue(), point.getPointValue()) <= eps):
+        if distance(dataPoints[i].getPointValue(), point.getPointValue()) <= eps:
             neighbourPoints.append(dataPoints[i])
 
 
@@ -140,7 +139,8 @@ def distance(point1, point2):
     dist = point1 - point2
     dist = np.square(dist)
     dist = np.sum(dist)
+    # return dist
     return np.sqrt(dist)
 
 
-dbscan('cho.txt', 1.1, 3)
+dbscan('cho.txt', 1.03, 4)

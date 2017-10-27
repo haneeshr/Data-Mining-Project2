@@ -98,7 +98,7 @@ def hierarchical(filename, k):
             print(len(clusters), calculateJaccardCoeff(clusters))
 
     assignedClusters = [point.clusterNumber for point in dataPoints]
-    svdDim = TruncatedSVD(n_components=2).fit_transform(geneData).T\
+    svdDim = TruncatedSVD(n_components=2).fit_transform(geneData).T
     print(np.shape(trueClusters))
     plot(svdDim, "SVD on " + filename + "trueClusters", trueClusters.T)
     plot(svdDim, "SVD on " + filename + "assignedClusters", assignedClusters)
@@ -145,4 +145,4 @@ def distance(point1, point2):
 
 
 
-hierarchical('iyer.txt', 5)
+hierarchical('cho.txt', 5)

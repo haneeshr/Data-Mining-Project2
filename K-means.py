@@ -179,6 +179,6 @@ def distance(point1, point2):
 
 # filename = sys.argv[1]
 # clusters = int(sys.argv[2])
-kmeans('iyer.txt', 10)
+kmeans('cho.txt', 5)
 
 
