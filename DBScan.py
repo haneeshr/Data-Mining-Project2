@@ -126,13 +126,18 @@ def findNeighbours(point, eps):
 def expandCluster(neighbourpoints, clusternumber, eps, minpoints):
 
     for i in range(0, len(neighbourpoints)):
-        if(neighbourpoints[i].getVisited() == True): continue
 
-        neighbourpoints[i].setVisited()
-        neighbourpoints[i].setCluster(clusternumber)
-        currentneighbours = findNeighbours(neighbourpoints[i], eps)
-        if(len(currentneighbours) >= minpoints):
-            expandCluster(currentneighbours, clusternumber, eps, minpoints)
+        if(neighbourpoints[i].getVisited() == False):
+
+            neighbourpoints[i].setVisited()
+            neighbourpoints[i].setCluster(clusternumber)
+            currentneighbours = findNeighbours(neighbourpoints[i], eps)
+            if(len(currentneighbours) >= minpoints):
+                expandCluster(currentneighbours, clusternumber, eps, minpoints)
+
+        if(neighbourpoints[i].getCluster() == None):
+            neighbourpoints[i].setVisited()
+            neighbourpoints[i].setCluster(clusternumber)
 
 
 def distance(point1, point2):
@@ -143,4 +148,4 @@ def distance(point1, point2):
     return np.sqrt(dist)
 
 
-dbscan('cho.txt', 1.03, 4)
+dbscan('iyer.txt', 1.03, 4)

@@ -145,4 +145,4 @@ def distance(point1, point2):
 
 
 
-hierarchical('cho.txt', 5)
+hierarchical('iyer.txt', 10)
