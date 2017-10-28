@@ -3,7 +3,6 @@ import sys
 import random
 
 filename = sys.argv[1]
-filename = "../"+filename
 genedata = open(filename, "r")
 lines = genedata.readlines()
 
