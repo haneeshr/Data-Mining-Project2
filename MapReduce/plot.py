@@ -67,7 +67,7 @@ def main(filename):
 	assignedClusters = readPartFile()
 
 	jaccard_coeffecient = calculateJaccardCoeff(assignedClusters, trueClusters)
-	print jaccard_coeffecient
+	print "Jaccard Coeffecient for MapReduce K-means on " + filename.split("/")[1] + "\t" + str(jaccard_coeffecient)
 
 	svdDim = TruncatedSVD(n_components=2).fit_transform(geneData).T
 
