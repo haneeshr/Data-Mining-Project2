@@ -76,9 +76,9 @@ def dbscan(filename, eps, minpoints):
             cn1 = dataPoints[i].clusterNumber
             cn2 = dataPoints[j].clusterNumber
 
-            if tc1 == tc2 and cn1 == cn2:
+            if tc1 == tc2 and cn1 == cn2 and (cn1 != -1 and tc1 != -1):
                 countones += 1
-            elif tc1 == tc2 or cn1 == cn2:
+            elif tc1 == tc2 or cn1 == cn2 and (cn1 != -1 and tc1 != -1):
                 countoneandZeros += 1
 
     print(float(countones) / float(countones + countoneandZeros))
@@ -144,8 +144,11 @@ def distance(point1, point2):
     dist = point1 - point2
     dist = np.square(dist)
     dist = np.sum(dist)
-    # return dist
     return np.sqrt(dist)
 
 
-dbscan('iyer.txt', 1.03, 4)
+filename      = sys.argv[1]
+eps           = float(sys.argv[2])
+minpoints     = int(sys.argv[3])
+
+dbscan(filename, eps, minpoints)

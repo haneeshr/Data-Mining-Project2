@@ -1,4 +1,5 @@
 import random
+import ast
 import numpy as np
 import sys
 
@@ -24,7 +25,7 @@ class Point:
         return self.x
 
 
-def kmeans(filename, clusters):
+def kmeans(filename, clusters, clusterpoints, iterations):
     np.set_printoptions(suppress=True)
 
     geneData = np.genfromtxt(filename,delimiter='\t', dtype=float)
@@ -36,7 +37,11 @@ def kmeans(filename, clusters):
     trueClusters = [x.split("\t")[1] for x in trueClusters]
     trueClusters = np.array(trueClusters)
 
-    sampleClusters = random.sample(range(0, geneData.shape[0]), clusters)
+
+    if(clusterpoints == None or len(clusterpoints) == 0):
+        sampleClusters = random.sample(range(0, geneData.shape[0]), clusters)
+    else:
+        sampleClusters = clusterpoints
 
     # mean = np.zeros((5,16))
     # counts = [0]*5
@@ -51,21 +56,22 @@ def kmeans(filename, clusters):
 
     clusterPoints = []
     for cluster in sampleClusters:
-        clusterPoints.append(geneData[cluster])
+        clusterPoints.append(geneData[cluster-1])
     #
     clusterPoints = np.array(clusterPoints)
     #
-    # print(clusterPoints)
 
     dataPoints = []
     for i in range(0, len(geneData)):
         dataPoints.append(Point(geneData[i], trueClusters[i]))
 
-    needsClutering = 1;
+    needsClutering = 1
 
-    while(needsClutering):
+    while(needsClutering and iterations != 0):
+        iterations -= 1
         needsClutering = performCluster(dataPoints, clusterPoints)
         clusterPoints = reCalculateCentroids(dataPoints, np.shape(clusterPoints)[0])
+
 
     groundTruthMatrix = np.zeros(((np.shape(geneData))[0],(np.shape(geneData))[0]))
     generatedClusterMatrix = np.zeros(((np.shape(geneData))[0],(np.shape(geneData))[0]))
@@ -92,8 +98,8 @@ def kmeans(filename, clusters):
                 countoneandZeros += 1
 
     print(countones/(countoneandZeros+countones))
-    # for point in dataPoints:
-    #     print(point.getCluster())
+
+
 
     countones = 0
     countoneandZeros = 0
@@ -109,13 +115,13 @@ def kmeans(filename, clusters):
             elif tc1 == tc2 or cn1 == cn2:
                 countoneandZeros+=1
 
-    print(countones)
-    print(countoneandZeros)
+    # print(countones)
+    # print(countoneandZeros)
 
     assignedClusters = [point.clusterNumber for point in dataPoints]
     svdDim = TruncatedSVD(n_components=2).fit_transform(geneData).T
-    plot(svdDim, "SVD on " + filename + "trueClusters", trueClusters.T)
-    plot(svdDim, "SVD on " + filename + "assignedClusters", assignedClusters)
+    plot(svdDim, "K-Means on " + filename + "trueClusters", trueClusters.T)
+    plot(svdDim, "K-Means on " + filename + "assignedClusters", assignedClusters)
     plt.show()
 
 def plot(reeducedDimensions, title, diseases):
@@ -134,7 +140,6 @@ def plot(reeducedDimensions, title, diseases):
 def reCalculateCentroids(dataPoints, clusterSize):
 
     clusterOccurence = np.zeros(clusterSize);
-    # print(np.shape(dataPoints[0].getPointValue())[0])
     pointDimension = np.shape(dataPoints[0].getPointValue())[0]
     currentClusterSum = np.zeros((clusterSize,
                                  pointDimension))
@@ -177,8 +182,23 @@ def distance(point1, point2):
 
 
 
-# filename = sys.argv[1]
-# clusters = int(sys.argv[2])
-kmeans('cho.txt', 5)
+
+
+filename      = sys.argv[1]
+clusters      = int(sys.argv[2])
+
+if(len(sys.argv) > 3):
+    clusterPoints = ast.literal_eval(sys.argv[3])
+else:
+    clusterPoints = None
+
+if(len(sys.argv) > 4):
+    iterations    = int(sys.argv[4])
+else:
+    iterations    = 999
+
+
+
+kmeans(filename, clusters, clusterPoints, iterations)
 
 

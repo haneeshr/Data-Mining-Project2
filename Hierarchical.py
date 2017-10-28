@@ -94,14 +94,14 @@ def hierarchical(filename, k):
         merge(clusters[row], clusters[col])
         clusters.remove(clusters[col])
 
-        if len(clusteredMatrix)<20 :
-            print(len(clusters), calculateJaccardCoeff(clusters))
+
+    print(calculateJaccardCoeff(clusters))
 
     assignedClusters = [point.clusterNumber for point in dataPoints]
     svdDim = TruncatedSVD(n_components=2).fit_transform(geneData).T
-    print(np.shape(trueClusters))
-    plot(svdDim, "SVD on " + filename + "trueClusters", trueClusters.T)
-    plot(svdDim, "SVD on " + filename + "assignedClusters", assignedClusters)
+    # print(np.shape(trueClusters))
+    plot(svdDim, "HAC clustering " + filename + "trueClusters", trueClusters.T)
+    plot(svdDim, "HAC clustering " + filename + "assignedClusters", assignedClusters)
     plt.show()
 
 def plot(reeducedDimensions, title, diseases):
@@ -144,5 +144,7 @@ def distance(point1, point2):
     return np.sqrt(dist)
 
 
+filename      = sys.argv[1]
+clusters      = int(sys.argv[2])
 
-hierarchical('iyer.txt', 10)
+hierarchical(filename, clusters)
