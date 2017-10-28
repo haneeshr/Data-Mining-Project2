@@ -9,3 +9,7 @@ arg1 - The filename(dataset) on which we need to run K-means Clustering.
 arg2 - K, which specifies the number of clusters the dataset need to be clustered into
 arg3 - K space separated ids as a string, which specifies the initial cluster centroids (or) an empty string to randomly initialize cluster centroids.
 arg4 - N, number of iterations for which clustering is to be performed.
+
+Example:
+
+./run.sh cho.txt 5 "378 55 51 35 236" 20
